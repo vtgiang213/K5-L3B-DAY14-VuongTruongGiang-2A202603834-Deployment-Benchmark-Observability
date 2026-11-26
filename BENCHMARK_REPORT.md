@@ -91,8 +91,8 @@ Chạy v1 với baseline v2 cho thấy 20 câu regression; quality gate FAIL và
 
 | # | Thay đổi | Alert nào firing | Thời gian từ lúc đổi → firing | Panel nào phản ánh rõ nhất |
 |---|---|---|---|---|
-| A | `MOCK_ERROR_RATE=0.2` | `AgentHighErrorRate` | Đã thấy firing lúc khoảng 16:58; tải bắt đầu khoảng 16:56 (quan sát sau khoảng 2 phút, không xác định thời điểm firing chính xác). | Error rate / trang Alerts |
-| B | `MOCK_SLOW_RATE=0.3` | `AgentHighLatencyP95` | Đã thấy firing lúc khoảng 16:58; tải bắt đầu khoảng 16:56 (quan sát sau khoảng 2 phút, không xác định thời điểm firing chính xác). | p95 / trang Alerts |
+| A | `MOCK_ERROR_RATE=0.2` | `AgentHighErrorRate` | Đổi cấu hình khoảng 16:53, chạy lại tải khoảng 16:56, thấy firing lúc 16:58. Khoảng 5 phút từ khi đổi cấu hình; không xác định thời điểm bắt đầu firing chính xác. | Trang Alerts |
+| B | `MOCK_SLOW_RATE=0.3` | `AgentHighLatencyP95` | Đổi cấu hình khoảng 16:53, chạy lại tải khoảng 16:56, thấy firing lúc 16:58. Khoảng 5 phút từ khi đổi cấu hình; không xác định thời điểm bắt đầu firing chính xác. | Trang Alerts |
 | C | `LLM_MODEL=mock-llm-large` | Chưa thực hiện | — | — |
 | D | `docker pause` 1 instance | Chưa thực hiện | — | — |
 | E | `AGENT_VERSION=v1` | Chưa thực hiện | — | — |
