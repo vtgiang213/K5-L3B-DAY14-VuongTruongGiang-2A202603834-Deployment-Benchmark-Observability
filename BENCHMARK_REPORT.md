@@ -80,6 +80,13 @@ Chạy v1 với baseline v2 cho thấy 20 câu regression; quality gate FAIL và
 - [x] Một trace lỗi trong Jaeger có event `exception`: `screenshots/jaeger-error-trace.png`
 - [x] Trang Alerts của Prometheus với hai alert cùng **firing**: `screenshots/prometheus-alert-firing.png`
 
+**Exercise 7.4:**
+
+1. Tại thời điểm Grafana hiển thị 17:09:35 ngày 26/11, avg là 248 ms, p95 là 296 ms và p99 là 1,87 s. P95 cao hơn avg 48 ms; khoảng cách lớn giữa p99 và average cho thấy một nhóm request bị chậm hơn nhiều. Đây là giá trị của panel tại thời điểm chụp, khác với số tổng hợp Locust trong mục 5.
+2. Panel Requests/s theo instance cho thấy ba đường sát nhau, mỗi instance xấp xỉ 6 req/s tại thời điểm chụp; tải được chia tương đối đều trong lần quan sát này.
+3. Input gồm system prompt, câu hỏi và context truy xuất, nhưng không nhất thiết lớn hơn output: ảnh Grafana ở lần quan sát này cho thấy output/s cao hơn input/s; tỷ lệ phụ thuộc độ dài prompt và câu trả lời.
+4. `GET /metrics` qua Nginx (`localhost:8080`) trả `404 Not Found`; cấu hình proxy không công khai endpoint metrics. Prometheus scrape metrics trực tiếp qua mạng nội bộ.
+
 ### 4.2 Thí nghiệm "phá hệ thống"
 
 | # | Thay đổi | Alert nào firing | Thời gian từ lúc đổi → firing | Panel nào phản ánh rõ nhất |
