@@ -9,10 +9,28 @@
 #
 # Bản dưới đây build và chạy được nhưng CHƯA đạt yêu cầu nào ở trên.
 # ============================================================
-FROM python:3.11
+FROM python:3.11-slim AS builder
 
 WORKDIR /app
-COPY . .
-RUN pip install -r requirements.txt
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-CMD uvicorn app.main:app --host 0.0.0.0 --port 8000
+FROM python:3.11-slim AS runtime
+WORKDIR /app
+RUN groupadd --system appuser \
+    && useradd --system --gid appuser --create-home appuser
+COPY --from=builder /opt/venv /opt/venv
+COPY app/ ./app/
+COPY utils/ ./utils/
+ENV PATH="/opt/venv/bin:$PATH"
+ENV PYTHONUNBUFFERED=1
+
+USER appuser
+
+EXPOSE 8000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:' + __import__('os').getenv('PORT', '8000') + '/health', timeout=3)" || exit 1
+
+CMD ["sh", "-c", "exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
