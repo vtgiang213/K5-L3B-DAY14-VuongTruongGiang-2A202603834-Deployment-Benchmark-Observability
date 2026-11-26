@@ -74,6 +74,12 @@ Nginx là reverse proxy; cấu hình agent trỏ tới Redis (cache/session và 
 
 Kết quả chạy thực tế: `docker compose ps` cho thấy bốn service đang chạy, agent, Redis và Qdrant đều healthy. Gọi `GET /health` qua Nginx trả `status: ok`, version `2.0.0`; `POST /ask` với câu hỏi `Explain microservices` trả câu trả lời của mock agent.
 
+## Part 3: Cloud Deployment
+
+Đã deploy agent Part 6 lên Render: https://day14-agent-ijwz.onrender.com. Blueprint tạo web service Docker và Render Key Value. Học viên kiểm tra `/health` và `/ready` trả 200, `POST /ask` không key trả 401 và có key hợp lệ trả 200. Chi tiết trong `DEPLOYMENT.md`; ảnh minh chứng trong `screenshots/`.
+
+Phần so sánh cấu hình Railway / Render và mô tả pipeline Cloud Run: chưa hoàn thành.
+
 ## Part 4: API Security
 
 ### Exercise 4.1: API key
@@ -140,6 +146,8 @@ Result: 12/12 tiêu chí đạt · 41/41 checks passed
 Docker image đo được 273 MB; `docker stop` trả exit code 0 sau 0,7 giây. Cấu hình deploy đã qua kiểm tra, còn URL public phải được triển khai và kiểm tra riêng.
 
 ## AI log
+
+- AI hướng dẫn xây dựng Part 6 và chuẩn bị Blueprint Render; học viên tự sửa code, chạy script 12/12, tạo service và kiểm tra bốn mã HTTP public. AI ghi lại các kết quả do học viên cung cấp.
 
 - Đã hỏi AI về yêu cầu lab, cách chuẩn bị môi trường WSL và ghi câu trả lời Part 1.
 - AI hỗ trợ phân tích Dockerfile và tính chênh lệch kích thước Part 2 dựa trên kết quả `docker images` do học viên chạy; cần tự đối chiếu và giải thích kết quả.
