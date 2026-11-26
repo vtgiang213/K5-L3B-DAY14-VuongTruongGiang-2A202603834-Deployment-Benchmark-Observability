@@ -25,6 +25,7 @@ RUN chown -R agent:agent /app
 
 USER agent
 
+ENV HOME=/home/agent
 ENV PATH=/home/agent/.local/bin:$PATH
 ENV PYTHONPATH=/app
 ENV PYTHONDONTWRITEBYTECODE=1

@@ -78,7 +78,13 @@ Kết quả chạy thực tế: `docker compose ps` cho thấy bốn service đa
 
 Đã deploy agent Part 6 lên Render: https://day14-agent-ijwz.onrender.com. Blueprint tạo web service Docker và Render Key Value. Học viên kiểm tra `/health` và `/ready` trả 200, `POST /ask` không key trả 401 và có key hợp lệ trả 200. Chi tiết trong `DEPLOYMENT.md`; ảnh minh chứng trong `screenshots/`.
 
-Phần so sánh cấu hình Railway / Render và mô tả pipeline Cloud Run: chưa hoàn thành.
+### So sánh Railway và Render
+
+`railway.toml` khai báo builder Dockerfile, đường dẫn health check `/health`, timeout và chính sách restart cho service Railway. `render.yaml` là Blueprint YAML khai báo web service Docker lẫn Key Value, thư mục gốc `06-lab-complete`, health check và các biến môi trường; `AGENT_API_KEY` được tạo tự động, `REDIS_URL` lấy từ connection string nội bộ của service Key Value. Hai định dạng khác nhau vì mỗi nền tảng có cơ chế khai báo tài nguyên riêng; cả hai dùng Dockerfile và `/health`.
+
+### Exercise 3.3: Pipeline Cloud Run
+
+Theo `cloudbuild.yaml`, pipeline chạy pytest, build Docker image với tag commit và `latest`, rồi push các tag lên registry. Sau đó `gcloud run deploy` triển khai image theo commit tại `asia-southeast1`, cấu hình 1–10 instance, tài nguyên, timeout, biến môi trường và secret từ Secret Manager. `service.yaml` mô tả service, giới hạn concurrency và tài nguyên, liveness `/health` và startup probe `/ready`. Đây là phân tích cấu hình mẫu, chưa triển khai Cloud Run.
 
 ## Part 4: API Security
 
@@ -115,6 +121,10 @@ Cost guard bảo vệ ngân sách: với yêu cầu $10/tháng, có thể lưu c
 
 ## Part 5: Scaling & Reliability
 
+### Exercise 5.1–5.3: Health, shutdown và stateless
+
+`/health` kiểm tra process còn sống; `/ready` kiểm tra instance đã sẵn sàng nhận traffic. Readiness có thể trả 503 khi dependency chưa sẵn sàng, trong khi liveness vẫn trả 200 nếu process còn sống. Graceful shutdown ngừng nhận request mới, chờ request đang xử lý hoàn tất và dọn tài nguyên trước khi thoát. State trong RAM chỉ thuộc một instance; khi load balancer chuyển request sang instance khác, session có thể mất. Lưu session ở Redis giúp các instance đọc chung. Các ý này dựa trên code mẫu và thiết kế; bài kiểm tra shutdown thực tế đã chạy ở Part 6.
+
 ### Exercise 5.4–5.5: Kiểm tra stateless
 
 Đã chạy `python test_stateless.py` với stack scaling. Năm request trong cùng một session được phục vụ bởi ba instance khác nhau; sau đó script đọc được đủ 10 message (5 câu hỏi và 5 câu trả lời) và báo session history được giữ qua Redis. Kết quả này cho thấy lịch sử được chia sẻ giữa các instance trong thử nghiệm; script không kiểm tra việc tắt một instance.
@@ -143,7 +153,7 @@ Result: 12/12 tiêu chí đạt · 41/41 checks passed
 🎉 PASS 12/12 — PRODUCTION READY!
 ```
 
-Docker image đo được 273 MB; `docker stop` trả exit code 0 sau 0,7 giây. Cấu hình deploy đã qua kiểm tra, còn URL public phải được triển khai và kiểm tra riêng.
+Docker image đo được 273 MB; `docker stop` trả exit code 0 sau 0,7 giây. URL public đã được triển khai và kiểm tra như ở Part 3.
 
 ## AI log
 
@@ -152,3 +162,4 @@ Docker image đo được 273 MB; `docker stop` trả exit code 0 sau 0,7 giây.
 - Đã hỏi AI về yêu cầu lab, cách chuẩn bị môi trường WSL và ghi câu trả lời Part 1.
 - AI hỗ trợ phân tích Dockerfile và tính chênh lệch kích thước Part 2 dựa trên kết quả `docker images` do học viên chạy; cần tự đối chiếu và giải thích kết quả.
 - AI hỗ trợ giải thích và ghi kết quả kiểm tra xác thực, rate limit cùng cách thiết kế cost guard ở Part 4..
+- AI hỗ trợ phân tích cấu hình cloud, tổng hợp kết quả benchmark và quan sát; học viên chạy lệnh, kiểm tra đầu ra và cung cấp ảnh, số liệu.
